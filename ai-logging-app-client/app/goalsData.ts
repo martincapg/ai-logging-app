@@ -4,7 +4,8 @@ export type Goal = {
 };
 
 export const initialGoals: Goal[] = [
-  { name: "Daily Walk", progress: 70 },
-  { name: "Read Books", progress: 40 },
-  { name: "Meditation", progress: 90 }
+  { name: "Chores", progress: 0 },
+  { name: "Exercise", progress: 0 },
+  { name: "Mental Wellbeing", progress: 0 },
+  { name: "Screwing with Ludwig", progress: 0 }
 ];

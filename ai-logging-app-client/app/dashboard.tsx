@@ -1,17 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { initialGoals, Goal } from "./goalsData";
 export default function Dashboard() {
 
-  const [goals, setGoals] = useState([
-    { name: "Daily Walk", progress: 70 },
-    { name: "Read Books", progress: 40 },
-    { name: "Meditation", progress: 90 },
-  ]);
-  const activities = [
-    { text: "Went for a 30-minute walk", goal: "Daily Walk" },
-    { text: "Read 10 pages of a leadership book", goal: "Read Books" },
-    { text: "Meditated for 15 minutes", goal: "Meditation" },
-  ];
+  const [goals, setGoals] = useState<Goal[]>(initialGoals);
+  const [activities, setActivities] = useState<{ text: string; category: string }[]>([]);
 
   // Modal state
   const [showModal, setShowModal] = useState(false);
@@ -66,7 +59,7 @@ export default function Dashboard() {
             {activities.map((activity, idx) => (
               <li key={idx} className="bg-zinc-100 dark:bg-zinc-800 rounded-lg px-4 py-2 flex justify-between items-center">
                 <span className="text-zinc-700 dark:text-zinc-200">{activity.text}</span>
-                <span className="text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full">{activity.goal}</span>
+                <span className="text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full">{activity.category}</span>
               </li>
             ))}
           </ul>

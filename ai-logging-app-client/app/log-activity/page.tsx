@@ -7,9 +7,17 @@ export default function LogActivityPage() {
   const [loading, setLoading] = useState(false);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [aiResult, setAiResult] = useState<{ category: string; confidence: number } | null>(null);
+  const [recentActivities, setRecentActivities] = useState<{ text: string; category: string }[]>([]);
+
+  // Fetch recent activities on mount
+  useEffect(() => {
+    fetch("/api/activities")
+      .then(res => res.json())
+      .then(data => setRecentActivities(data));
+  }, []);
 
   useEffect(() => {
-    fetch("/api/categories")
+    fetch("/api/goals")
       .then((res) => res.json())
       .then((data) => setGoals(data));
   }, []);
@@ -20,7 +28,7 @@ export default function LogActivityPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        categories: goals.map((g) => g.name),
+        goals: goals.map((g) => g.name),
         input,
       }),
     });
@@ -32,6 +40,18 @@ export default function LogActivityPage() {
       parsed = null;
     }
     setAiResult(parsed);
+    if (parsed && parsed.category) {
+      // Store activity in /api/activities
+      await fetch("/api/activities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: input, category: parsed.category })
+      });
+      // Refresh recent activities
+      const actsRes = await fetch("/api/activities");
+      const acts = await actsRes.json();
+      setRecentActivities(acts);
+    }
     setLoading(false);
   };
 
