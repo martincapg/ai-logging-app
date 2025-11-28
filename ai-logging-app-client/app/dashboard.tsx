@@ -6,6 +6,20 @@ export default function Dashboard() {
   const [goals, setGoals] = useState<Goal[]>(initialGoals);
   const [activities, setActivities] = useState<{ text: string; category: string }[]>([]);
 
+  useEffect(() => {
+    const fetchActivities = () => {
+      fetch("/api/activities")
+        .then(res => res.json())
+        .then(data => setActivities(data));
+    };
+    fetchActivities();
+    const handler = (e: any) => {
+      setActivities(e.detail);
+    };
+    window.addEventListener("activitiesUpdated", handler);
+    return () => window.removeEventListener("activitiesUpdated", handler);
+  }, []);
+
   // Modal state
   const [showModal, setShowModal] = useState(false);
   const [newGoalName, setNewGoalName] = useState("");

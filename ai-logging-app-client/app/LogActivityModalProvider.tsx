@@ -39,6 +39,17 @@ function LogActivityModal({ onClose }: { onClose: () => void }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ goals, input: activity }),
     });
+    // Fetch and update recent activities after logging
+    try {
+      const actsRes = await fetch("/api/activities");
+      if (actsRes.ok) {
+        const acts = await actsRes.json();
+        // Dispatch a custom event to notify other components
+        window.dispatchEvent(new CustomEvent("activitiesUpdated", { detail: acts }));
+      }
+    } catch (err) {
+      console.error("Error fetching recent activities after logging:", err);
+    }
     setActivity("");
     setLogging(false);
     onClose();
