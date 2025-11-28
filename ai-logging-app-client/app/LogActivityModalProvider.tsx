@@ -22,6 +22,14 @@ export function useLogActivityModal() {
 function LogActivityModal({ onClose }: { onClose: () => void }) {
   const [activity, setActivity] = useState("");
   const [logging, setLogging] = useState(false);
+  const [goals, setGoals] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/goals")
+      .then(res => res.json())
+      .then(data => setGoals(data.map((g: { name: string }) => g.name)));
+  }, []);
+
   const handleLogActivity = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activity.trim()) return;
@@ -29,7 +37,7 @@ function LogActivityModal({ onClose }: { onClose: () => void }) {
     await fetch("/api/activity", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ activity }),
+      body: JSON.stringify({ goals, input: activity }),
     });
     setActivity("");
     setLogging(false);

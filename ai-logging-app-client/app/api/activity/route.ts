@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     messages: [
       {
         role: "user",
-        content: JSON.stringify({ goals, input }),
+        content: JSON.stringify({ categories: goals, input }),
       },
     ],
   };
