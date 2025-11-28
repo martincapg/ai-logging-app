@@ -34,17 +34,34 @@ function LogActivityModal({ onClose }: { onClose: () => void }) {
     e.preventDefault();
     if (!activity.trim()) return;
     setLogging(true);
-    await fetch("/api/activity", {
+    // Step 1: Get AI category
+    const aiRes = await fetch("/api/activity", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ goals, input: activity }),
     });
-    // Fetch and update recent activities after logging
+    let parsed = null;
+    if (aiRes.ok) {
+      const aiData = await aiRes.json();
+      try {
+        parsed = JSON.parse(aiData.message.content);
+      } catch {
+        parsed = null;
+      }
+    }
+    // Step 2: Store activity with category
+    if (parsed && parsed.category) {
+      await fetch("/api/activities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: activity, category: parsed.category })
+      });
+    }
+    // Step 3: Fetch and update recent activities
     try {
       const actsRes = await fetch("/api/activities");
       if (actsRes.ok) {
         const acts = await actsRes.json();
-        // Dispatch a custom event to notify other components
         window.dispatchEvent(new CustomEvent("activitiesUpdated", { detail: acts }));
       }
     } catch (err) {
