@@ -1,7 +1,5 @@
-export default function Home() {
-  return (
-    <div>
-      <h1>Magical AI Logging App</h1>
-    </div>
-  );
+import Dashboard from "./dashboard";
+
+export default function Page() {
+  return <Dashboard />;
 }
